@@ -88,3 +88,10 @@ The UI is branded as **Grammar Coach** with a clean blue/white interface.
 │   └── index.html              # Main UI template
 │
 └── __pycache__/                # Python cache (ignored)
+
+
+<img width="1916" height="892" alt="image" src="https://github.com/user-attachments/assets/fc6d0878-1903-4dc1-a829-aff03ea4bdcd" />
+
+<img width="1910" height="891" alt="image" src="https://github.com/user-attachments/assets/b01ab8bb-5e0f-4097-8d33-f2b7da6c032c" />
+
+
