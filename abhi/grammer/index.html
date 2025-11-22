@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Grammar Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Flask static CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+
+<body>
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="App Logo" class="topbar-logo" />
+            <div class="topbar-brand">
+                <span class="brand-title">Grammar Studio</span>
+                <span class="brand-subtitle">Polish your writing with instant AI feedback.</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="topbar-quote">
+                <span class="topbar-quote-icon">✨</span>
+                <span class="topbar-quote-text">
+                    “Shape your sentences. Sharpen your story.”
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN SHELL -->
+    <div class="app-shell">
+        <!-- SIDE BAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Tools</span>
+            </div>
+
+            <!-- Grammar checker tool -->
+            <button class="sidebar-item active" data-view="grammar">
+                <div class="sidebar-icon">G</div>
+                <span>Grammar Checker</span>
+            </button>
+
+            <!-- NEW: Summarizer tool -->
+            <button class="sidebar-item" data-view="summarizer">
+                <div class="sidebar-icon">S</div>
+                <span>Summarizer</span>
+            </button>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-panel">
+            <!-- CHATBOT VIEW (default landing) -->
+            <section id="chatbot-view" class="view view-active">
+                <div class="chatbot-wrapper">
+                    <div class="chatbot-card">
+                        <!-- BIG LOGO -->
+                        <div class="chatbot-hero">
+                            <img src="{{ url_for('static', filename='logo.png') }}" alt="App Logo"
+                                class="chatbot-hero-img" />
+                        </div>
+
+                        <div class="chatbot-header">
+                            <div class="chatbot-avatar">
+                                <span>🤖</span>
+                            </div>
+                            <div>
+                                <h2 class="chatbot-title">Hi there, how can I help?</h2>
+                                <p class="chatbot-subtitle">
+                                    I can analyse your text for grammar, spelling and punctuation mistakes. Type
+                                    <strong>grammar</strong> below or click the button to get started.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="chatbot-quick-actions">
+                            <button class="chip" data-chat-intent="grammar">
+                                ✅ Grammar Checker
+                            </button>
+                        </div>
+
+                        <div class="chat-window" id="chatWindow">
+                            <div class="chat-message bot">
+                                <p>
+                                    Hey! Type <strong>grammar</strong> to open the Grammar Checker panel.
+                                </p>
+                            </div>
+                        </div>
+
+                        <form class="chat-input-row" id="chatForm">
+                            <input type="text" id="chatInput" class="chat-input"
+                                placeholder="Type 'grammar' to open the checker..." autocomplete="off" />
+                            <button type="submit" class="btn btn-primary">Send</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GRAMMAR CHECKER VIEW -->
+            <section id="grammar-view" class="view">
+                <div class="view-header">
+                    <h2>Grammar Checker</h2>
+                    <p>Paste your text, hit submit, and review the insights from your model.</p>
+                </div>
+
+                <div class="panel-grid">
+                    <!-- LEFT: INPUT -->
+                    <div class="panel panel-left">
+                        <div class="panel-header">
+                            <span class="panel-title">Your Text</span>
+                            <span class="panel-badge">Input</span>
+                        </div>
+                        <textarea id="grammarInput" class="text-area"
+                            placeholder="Paste or type the sentence/paragraph here..."></textarea>
+                        <div class="panel-footer">
+                            <span id="grammarCharCount" class="text-muted">0 characters</span>
+                            <button id="grammarSubmitBtn" class="btn btn-primary">
+                                Submit
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: RESULTS -->
+                    <div class="panel panel-right">
+                        <div class="panel-header">
+                            <span class="panel-title">Analysis</span>
+                            <span class="panel-badge badge-soft">After submit</span>
+                        </div>
+
+                        <div id="grammarPlaceholder" class="placeholder">
+                            <p>Results will appear here after you submit your text.</p>
+                        </div>
+
+                        <div id="grammarResults" class="grammar-results hidden">
+                            <!-- STATS -->
+                            <div class="stats-row">
+                                <div class="stat-card">
+                                    <span class="stat-label">Mistakes (word mismatches)</span>
+                                    <span id="mistakeCount" class="stat-value">0</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-label">Correctness</span>
+                                    <span id="correctnessPercent" class="stat-value">100%</span>
+                                </div>
+                            </div>
+
+                            <!-- GLOBAL TABS: ISSUES / SUGGESTIONS -->
+                            <div class="grammar-tabs">
+                                <button class="grammar-tab active" data-grammar-tab="issues">
+                                    Issues
+                                </button>
+                                <button class="grammar-tab" data-grammar-tab="suggestions">
+                                    Suggestions
+                                </button>
+                            </div>
+
+                            <!-- ISSUES VIEW -->
+                            <div id="grammarIssuesView" class="grammar-tab-content active">
+                                <div id="issuesContainer" class="issues-container">
+                                    <!-- dynamically filled via JS -->
+                                </div>
+                            </div>
+
+                            <!-- SUGGESTIONS VIEW -->
+                            <div id="grammarSuggestionsView" class="grammar-tab-content">
+                                <div id="suggestionsContainer" class="suggestions-container">
+                                    <!-- dynamically filled via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEW: SUMMARIZER VIEW -->
+            <section id="summarizer-view" class="view">
+                <div class="view-header">
+                    <h2>Summarizer</h2>
+                    <p>Turn long text into concise key-point summaries powered by your local BART model.</p>
+                </div>
+
+                <div class="panel-grid">
+                    <!-- LEFT: INPUT -->
+                    <div class="panel panel-left">
+                        <div class="panel-header">
+                            <span class="panel-title">Your Text</span>
+                            <span class="panel-badge">Input</span>
+                        </div>
+                        <textarea id="summarizerInput" class="text-area"
+                            placeholder="Paste or type the text you want summarized..."></textarea>
+                        <div class="panel-footer">
+                            <span class="text-muted small">
+                                Max points:
+                                <input id="summarizerPoints" type="number" min="1" max="20" value="5"
+                                    style="width:60px;padding:4px 6px;border-radius:999px;border:1px solid var(--border-subtle);" />
+                            </span>
+                            <button id="summarizerSubmitBtn" class="btn btn-primary">
+                                Summarize
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: SUMMARY -->
+                    <div class="panel panel-right">
+                        <div class="panel-header">
+                            <span class="panel-title">Key Points</span>
+                            <span class="panel-badge badge-soft">After summarize</span>
+                        </div>
+
+                        <div id="summarizerPlaceholder" class="placeholder">
+                            <p>Summarized key points will appear here after you click Summarize.</p>
+                        </div>
+
+                        <div id="summarizerResults" class="grammar-results hidden">
+                            <div id="summarizerList" class="suggestions-container">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <button class="chat-fab" id="chatFab" title="Open assistant">
+        💬
+    </button>
+
+    <!-- Flask static JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
