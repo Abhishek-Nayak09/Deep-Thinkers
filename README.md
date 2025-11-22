@@ -67,7 +67,7 @@ The UI is branded as **Grammar Coach** with a clean blue/white interface.
 │   special_tokens_map.json
 │
 ├── grammer/
-│   │   app.py                  # (legacy) grammar-only Flask app – can be deleted
+│   │   app.py                  
 │   │   grammar_spell_corrector.py   # GrammarSpellCorrector class
 │   │
 │   └── grammar_spell_flan_t5/  # Local FLAN-T5 grammar model files
